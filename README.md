@@ -1,74 +1,101 @@
-# React + TypeScript + Vite
+## Freelance Dashboard (React + TypeScript)
+A mini-dashboard for freelancers to manage clients, projects, and payments. Built with React + TypeScript, Context API + useReducer, and Tailwind CSS for styling.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+---
 
-Currently, two official plugins are available:
+## Screenshot
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+![Screenshot]![alt text](image.png)
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Technologies Used
+React + TypeScript
+Context API + useReducer
+Tailwind CSS
+Vite (dev/build)
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## Main Features
+Typed data models: 
+Client
+, 
+Project
+, 
+Payment
+Global state with typed reducer and discriminated union actions
+Clients list with search (name, country, optional email)
+Projects list with:
+Project title and linked client
+Status: pending | in-progress | completed
+Payment status: paid | unpaid
+Mark-as-paid action creates a payment and updates state
+Payments table: project, client, amount, ISO date
+Overview stats: Total Projects, Paid, Unpaid, Total Budget
+Inline “New Project” form:
+Project title
+Client name (creates client if not found), optional email and country
+Optional budget
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+## Setup Instructions
+Clone
+git clone https://github.com/Boldecca/Dashboard-freelance.git
+cd Dashboard-freelance
+Install
+npm install
+Run
+npm run dev
+Open the printed local URL (for example http://localhost:5175)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Folder Structure
+Dashboard-freelance/
+├─ .git/
+├─ .gitignore
+├─ README.md
+├─ eslint.config.js
+├─ image.png
+├─ index.html
+├─ package-lock.json
+├─ package.json
+├─ public/
+├─ src/
+│  ├─ App.css
+│  ├─ App.tsx
+│  ├─ assets/
+│  ├─ components/
+│  │  ├─ ClientCard.tsx
+│  │  ├─ DashboardStats.tsx
+│  │  ├─ PaymentsList.tsx
+│  │  ├─ ProjectList.tsx
+│  │  └─ TasksPanel.tsx
+│  ├─ index.css
+│  ├─ main.tsx
+│  ├─ models.ts
+│  ├─ state/
+│  │  ├─ actions.ts
+│  │  └─ context.tsx
+│  └─ utils.ts
+├─ tsconfig.app.json
+├─ tsconfig.json
+├─ tsconfig.node.json
+└─ vite.config.ts
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Example Data
+Seeded in 
+src/state/actions.ts
+:
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-# Dashboard-freelance
+2 clients
+2 projects (linked to those clients)
+1 payment
+
+
+## Deployment
+
+live demo: https://dashboard-freelance-gamma.vercel.app/
