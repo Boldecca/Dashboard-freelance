@@ -11,32 +11,40 @@ type Props = {
 };
 
 export const ProjectList: React.FC<Props> = ({ projects, clients, onMarkPaid, onChangeStatus }) => {
+  const fmt = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       {projects.map((p) => {
         const client = findClientById(clients, p.clientId);
         return (
-          <div key={p.id} className="p-4 bg-neutral-900 border border-neutral-800 rounded-xl shadow-sm flex items-start justify-between gap-6">
-            <div className="space-y-1">
-              <h4 className="font-semibold tracking-tight text-neutral-100">{p.title}</h4>
-              <p className="text-sm text-neutral-400">{client ? client.name : <em>Client not found</em>}</p>
+          <div key={p.id} className="p-5 bg-white border border-neutral-200 rounded-2xl shadow-sm">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h4 className="font-medium text-black">{p.title}</h4>
+                <p className="text-sm text-neutral-500">{client ? client.name : <em>Client not found</em>}</p>
+              </div>
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <span className="inline-flex items-center rounded-full bg-neutral-800 px-2 py-0.5 text-xs font-medium text-neutral-300">Budget ${p.budget.toLocaleString()}</span>
-                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${p.status === "completed" ? "bg-emerald-900/40 text-emerald-300" : p.status === "in-progress" ? "bg-amber-900/40 text-amber-300" : "bg-neutral-800 text-neutral-300"}`}>{p.status}</span>
-                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${p.paymentStatus === "paid" ? "bg-emerald-900/40 text-emerald-300" : "bg-rose-900/40 text-rose-300"}`}>{p.paymentStatus}</span>
+                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border ${p.status === "completed" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : p.status === "in-progress" ? "bg-blue-50 text-blue-700 border-blue-200" : "bg-neutral-50 text-neutral-700 border-neutral-200"}`}>{p.status}</span>
+                <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border ${p.paymentStatus === "paid" ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-rose-50 text-rose-700 border-rose-200"}`}>{p.paymentStatus}</span>
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-[220px]">
+
+            <div className="mt-4 flex items-center justify-between text-sm">
+              <div className="text-neutral-400">Budget:</div>
+              <div className="font-semibold text-black">{fmt.format(p.budget)}</div>
+            </div>
+
+            <div className="mt-3 flex items-center gap-2">
               {p.paymentStatus === "unpaid" && (
                 <button
-                  className="px-3 py-2 rounded-md bg-neutral-200 text-neutral-900 text-sm font-medium hover:bg-white transition-colors"
+                  className="w-full px-3 py-2 rounded-md bg-black text-white text-sm font-medium hover:bg-neutral-900 transition-colors"
                   onClick={() => onMarkPaid(p.id)}
                 >
                   Mark as Paid
                 </button>
               )}
               <select
-                className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200 text-sm"
+                className="px-3 py-2 rounded-md border border-neutral-300 bg-white text-sm"
                 value={p.status}
                 onChange={(e) => onChangeStatus(p.id, e.target.value as Project["status"])}
               >
