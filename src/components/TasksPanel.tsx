@@ -8,9 +8,11 @@ type Props = {
   onAddTask: (task: Task) => void;
   clients: Client[];
   projects: Project[];
+  onAddClient: (client: Client) => void;
+  onAddProject: (project: Project) => void;
 };
 
-export const TasksPanel: React.FC<Props> = ({ tasks, onUpdateTaskStatus, onAddTask, clients, projects }) => {
+export const TasksPanel: React.FC<Props> = ({ tasks, onUpdateTaskStatus, onAddTask, clients, projects, onAddClient, onAddProject }) => {
   const [statusFilter, setStatusFilter] = useState<"all" | Task["status"]>("all");
   const [priorityFilter, setPriorityFilter] = useState<"all" | Task["priority"]>("all");
   const [query, setQuery] = useState("");
@@ -19,6 +21,13 @@ export const TasksPanel: React.FC<Props> = ({ tasks, onUpdateTaskStatus, onAddTa
   const [newProjectId, setNewProjectId] = useState<string>("");
   const [newStatus, setNewStatus] = useState<Task["status"]>("todo");
   const [newPriority, setNewPriority] = useState<Task["priority"]>("medium");
+  const [addNewClient, setAddNewClient] = useState(false);
+  const [clientName, setClientName] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+  const [clientCountry, setClientCountry] = useState("");
+  const [addNewProject, setAddNewProject] = useState(false);
+  const [projectTitle, setProjectTitle] = useState("");
+  const [projectBudget, setProjectBudget] = useState<number>(1000);
 
   const totals = {
     total: tasks.length,
@@ -41,25 +50,51 @@ export const TasksPanel: React.FC<Props> = ({ tasks, onUpdateTaskStatus, onAddTa
   );
 
   const handleAdd = () => {
-    const pid = newProjectId || projectsForClient[0]?.id;
-    if (!newTitle.trim() || !pid) return;
+    if (!newTitle.trim()) return;
+    let clientId = newClientId;
+    // Create client inline if requested
+    if (addNewClient) {
+      if (!clientName.trim()) return;
+      clientId = `client-${Date.now()}`;
+      const newClient: Client = { id: clientId, name: clientName.trim(), email: clientEmail || undefined, country: clientCountry || undefined };
+      onAddClient(newClient);
+      setNewClientId(clientId);
+    }
+
+    // Determine or create project
+    let projectId = newProjectId || projectsForClient[0]?.id;
+    if (addNewProject || !projectId) {
+      if (!projectTitle.trim() || !clientId) return;
+      projectId = `proj-${Date.now()}`;
+      const project: Project = {
+        id: projectId,
+        clientId,
+        title: projectTitle.trim(),
+        budget: projectBudget || 0,
+        status: "pending",
+        paymentStatus: "unpaid",
+      };
+      onAddProject(project);
+      setNewProjectId(projectId);
+    }
+
+    if (!projectId) return;
     const task: Task = {
       id: `task-${Date.now()}`,
-      projectId: pid,
+      projectId,
       title: newTitle.trim(),
       status: newStatus,
       priority: newPriority,
     };
     onAddTask(task);
     setNewTitle("");
-    // keep client/project selections
   };
 
   return (
     <section className="space-y-4">
       <h2 className="text-lg font-semibold text-neutral-200">Tasks</h2>
 
-      {/* Create Task */}
+      {/* Create Task (with inline Client/Project) */}
       <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-xl shadow-sm">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
           <input
@@ -68,29 +103,60 @@ export const TasksPanel: React.FC<Props> = ({ tasks, onUpdateTaskStatus, onAddTa
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
           />
-          <select
-            className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200"
-            value={newClientId}
-            onChange={(e) => {
-              setNewClientId(e.target.value);
-              setNewProjectId("");
-            }}
-          >
-            <option value="">All clients</option>
-            {clients.map((c) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-          </select>
-          <select
-            className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200"
-            value={newProjectId}
-            onChange={(e) => setNewProjectId(e.target.value)}
-          >
-            <option value="">Select project</option>
-            {projectsForClient.map((p) => (
-              <option key={p.id} value={p.id}>{p.title}</option>
-            ))}
-          </select>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <select
+                className="flex-1 px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200"
+                value={newClientId}
+                onChange={(e) => {
+                  setNewClientId(e.target.value);
+                  setNewProjectId("");
+                }}
+                disabled={addNewClient}
+              >
+                <option value="">All clients</option>
+                {clients.map((c) => (
+                  <option key={c.id} value={c.id}>{c.name}</option>
+                ))}
+              </select>
+              <label className="text-xs text-neutral-400 flex items-center gap-1">
+                <input type="checkbox" className="accent-white" checked={addNewClient} onChange={(e) => setAddNewClient(e.target.checked)} />
+                New client
+              </label>
+            </div>
+            {addNewClient && (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <input className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200" placeholder="Client name" value={clientName} onChange={(e) => setClientName(e.target.value)} />
+                <input className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200" placeholder="Email (optional)" value={clientEmail} onChange={(e) => setClientEmail(e.target.value)} />
+                <input className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200" placeholder="Country (optional)" value={clientCountry} onChange={(e) => setClientCountry(e.target.value)} />
+              </div>
+            )}
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <select
+                className="flex-1 px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200"
+                value={newProjectId}
+                onChange={(e) => setNewProjectId(e.target.value)}
+                disabled={addNewProject}
+              >
+                <option value="">Select project</option>
+                {projectsForClient.map((p) => (
+                  <option key={p.id} value={p.id}>{p.title}</option>
+                ))}
+              </select>
+              <label className="text-xs text-neutral-400 flex items-center gap-1">
+                <input type="checkbox" className="accent-white" checked={addNewProject} onChange={(e) => setAddNewProject(e.target.checked)} />
+                New project
+              </label>
+            </div>
+            {addNewProject && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <input className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200" placeholder="Project title" value={projectTitle} onChange={(e) => setProjectTitle(e.target.value)} />
+                <input className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200" placeholder="Budget" type="number" min="0" value={projectBudget} onChange={(e) => setProjectBudget(Number(e.target.value))} />
+              </div>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             <select
               className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200"
@@ -118,7 +184,7 @@ export const TasksPanel: React.FC<Props> = ({ tasks, onUpdateTaskStatus, onAddTa
             </button>
           </div>
         </div>
-        <div className="mt-2 text-xs text-neutral-400">Tip: Select a client to narrow the project list. The task is linked to the selected project; client name comes from that project.</div>
+        <div className="mt-2 text-xs text-neutral-400">Tip: You can add a brand new client and project inline. The task links to the chosen or newly created project, and the client is inferred from that project.</div>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">

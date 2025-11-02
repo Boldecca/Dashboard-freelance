@@ -36,6 +36,14 @@ function DashboardContent() {
     dispatch({ type: "ADD_TASK", payload: task });
   };
 
+  const onAddClient = (client: import("./models").Client) => {
+    dispatch({ type: "ADD_CLIENT", payload: client });
+  };
+
+  const onAddProject = (project: import("./models").Project) => {
+    dispatch({ type: "ADD_PROJECT", payload: project });
+  };
+
   const handleAddProject = () => {
     // Ensure at least one client exists
     let clientId = state.clients[0]?.id;
@@ -144,6 +152,8 @@ function DashboardContent() {
           onAddTask={onAddTask}
           clients={state.clients}
           projects={state.projects}
+          onAddClient={onAddClient}
+          onAddProject={onAddProject}
         />
       </main>
     </div>
