@@ -1,5 +1,5 @@
 // DashboardStats.tsx
-import React from "react";
+import type React from "react";
 import type { Project, Client, Payment } from "../models";
 import { countPaidUnpaid } from "../utils";
 

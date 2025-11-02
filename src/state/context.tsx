@@ -1,9 +1,9 @@
 // src/state/context.tsx
-import React, { createContext, useReducer, useContext, ReactNode } from "react";
-import { State, initialState, Action, reducer } from "./actions";
+import { createContext, useReducer, useContext, type ReactNode, type Dispatch } from "react";
+import { type State, initialState, type Action, reducer } from "./actions";
 interface AppStateContextType {
   state: State;
-  dispatch: React.Dispatch<Action>;
+  dispatch: Dispatch<Action>;
 }
 
 const AppStateContext = createContext<AppStateContextType | undefined>(undefined);

@@ -1,5 +1,4 @@
 // src/App.tsx
-import React from "react";
 import { StateProvider, useAppState } from "./state/context";
 import { DashboardStats } from "./components/DashboardStats";
 import { ProjectList } from "./components/ProjectList";
