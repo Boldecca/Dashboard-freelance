@@ -37,13 +37,7 @@ function DashboardContent() {
 
   // Removed tasks handlers
 
-  const onAddClient = (client: import("./models").Client) => {
-    dispatch({ type: "ADD_CLIENT", payload: client });
-  };
-
-  const onAddProject = (project: import("./models").Project) => {
-    dispatch({ type: "ADD_PROJECT", payload: project });
-  };
+  // removed unused onAddClient / onAddProject
 
   const handleAddProject = () => {
     // Open inline form; user will type client name
