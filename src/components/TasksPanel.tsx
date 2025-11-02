@@ -1,16 +1,24 @@
 import type React from "react";
-import { useState } from "react";
-import type { Task } from "../models";
+import { useMemo, useState } from "react";
+import type { Task, Client, Project } from "../models";
 
 type Props = {
   tasks: Task[];
   onUpdateTaskStatus: (taskId: string, status: Task["status"]) => void;
+  onAddTask: (task: Task) => void;
+  clients: Client[];
+  projects: Project[];
 };
 
-export const TasksPanel: React.FC<Props> = ({ tasks, onUpdateTaskStatus }) => {
+export const TasksPanel: React.FC<Props> = ({ tasks, onUpdateTaskStatus, onAddTask, clients, projects }) => {
   const [statusFilter, setStatusFilter] = useState<"all" | Task["status"]>("all");
   const [priorityFilter, setPriorityFilter] = useState<"all" | Task["priority"]>("all");
   const [query, setQuery] = useState("");
+  const [newTitle, setNewTitle] = useState("");
+  const [newClientId, setNewClientId] = useState<string>("");
+  const [newProjectId, setNewProjectId] = useState<string>("");
+  const [newStatus, setNewStatus] = useState<Task["status"]>("todo");
+  const [newPriority, setNewPriority] = useState<Task["priority"]>("medium");
 
   const totals = {
     total: tasks.length,
@@ -27,9 +35,91 @@ export const TasksPanel: React.FC<Props> = ({ tasks, onUpdateTaskStatus }) => {
     return true;
   });
 
+  const projectsForClient = useMemo(
+    () => projects.filter((p) => (newClientId ? p.clientId === newClientId : true)),
+    [projects, newClientId]
+  );
+
+  const handleAdd = () => {
+    const pid = newProjectId || projectsForClient[0]?.id;
+    if (!newTitle.trim() || !pid) return;
+    const task: Task = {
+      id: `task-${Date.now()}`,
+      projectId: pid,
+      title: newTitle.trim(),
+      status: newStatus,
+      priority: newPriority,
+    };
+    onAddTask(task);
+    setNewTitle("");
+    // keep client/project selections
+  };
+
   return (
     <section className="space-y-4">
       <h2 className="text-lg font-semibold text-neutral-200">Tasks</h2>
+
+      {/* Create Task */}
+      <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-xl shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
+          <input
+            className="md:col-span-2 px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white/10"
+            placeholder="Task title"
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+          />
+          <select
+            className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200"
+            value={newClientId}
+            onChange={(e) => {
+              setNewClientId(e.target.value);
+              setNewProjectId("");
+            }}
+          >
+            <option value="">All clients</option>
+            {clients.map((c) => (
+              <option key={c.id} value={c.id}>{c.name}</option>
+            ))}
+          </select>
+          <select
+            className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200"
+            value={newProjectId}
+            onChange={(e) => setNewProjectId(e.target.value)}
+          >
+            <option value="">Select project</option>
+            {projectsForClient.map((p) => (
+              <option key={p.id} value={p.id}>{p.title}</option>
+            ))}
+          </select>
+          <div className="flex items-center gap-2">
+            <select
+              className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200"
+              value={newStatus}
+              onChange={(e) => setNewStatus(e.target.value as Task["status"]) }
+            >
+              <option value="todo">todo</option>
+              <option value="in-progress">in-progress</option>
+              <option value="done">done</option>
+            </select>
+            <select
+              className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200"
+              value={newPriority}
+              onChange={(e) => setNewPriority(e.target.value as Task["priority"]) }
+            >
+              <option value="low">low</option>
+              <option value="medium">medium</option>
+              <option value="high">high</option>
+            </select>
+            <button
+              onClick={handleAdd}
+              className="px-3 py-2 rounded-md bg-white text-neutral-900 text-sm font-medium hover:bg-neutral-200 active:scale-[0.99] transition"
+            >
+              Add Task
+            </button>
+          </div>
+        </div>
+        <div className="mt-2 text-xs text-neutral-400">Tip: Select a client to narrow the project list. The task is linked to the selected project; client name comes from that project.</div>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         <div className="p-4 bg-neutral-900 border border-neutral-800 rounded-xl shadow-sm">
