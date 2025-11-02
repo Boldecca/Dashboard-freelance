@@ -20,15 +20,24 @@ function DashboardContent() {
   };
 
   return (
-    <div className="App p-4">
-      <h1 className="text-2xl font-bold mb-4">Dashboard</h1>
-      <DashboardStats projects={state.projects} clients={state.clients} payments={state.payments} />
-      <ProjectList
-        projects={state.projects}
-        clients={state.clients}
-        onMarkPaid={onMarkPaid}
-        onChangeStatus={onChangeStatus}
-      />
+    <div className="min-h-screen bg-slate-50 text-slate-900">
+      <header className="border-b bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+        <div className="max-w-6xl mx-auto px-4 py-4">
+          <h1 className="text-2xl font-semibold tracking-tight">Freelance Dashboard</h1>
+        </div>
+      </header>
+      <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+        <DashboardStats projects={state.projects} clients={state.clients} payments={state.payments} />
+        <section>
+          <h2 className="text-lg font-semibold mb-3">Projects</h2>
+          <ProjectList
+            projects={state.projects}
+            clients={state.clients}
+            onMarkPaid={onMarkPaid}
+            onChangeStatus={onChangeStatus}
+          />
+        </section>
+      </main>
     </div>
   );
 }
