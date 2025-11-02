@@ -5,7 +5,7 @@ A mini-dashboard for freelancers to manage clients, projects, and payments. Buil
 
 ## Screenshot
 
-![Screenshot]![alt text](image.png)
+![Screenshot]!![alt text](image.png)
 
 ---
 
