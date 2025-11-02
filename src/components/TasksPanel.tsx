@@ -1,4 +1,5 @@
 import type React from "react";
+import { useState } from "react";
 import type { Task } from "../models";
 
 type Props = {
@@ -7,9 +8,9 @@ type Props = {
 };
 
 export const TasksPanel: React.FC<Props> = ({ tasks, onUpdateTaskStatus }) => {
-  const [statusFilter, setStatusFilter] = React.useState<"all" | Task["status"]>("all");
-  const [priorityFilter, setPriorityFilter] = React.useState<"all" | Task["priority"]>("all");
-  const [query, setQuery] = React.useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | Task["status"]>("all");
+  const [priorityFilter, setPriorityFilter] = useState<"all" | Task["priority"]>("all");
+  const [query, setQuery] = useState("");
 
   const totals = {
     total: tasks.length,
