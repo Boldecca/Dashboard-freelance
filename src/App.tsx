@@ -20,16 +20,20 @@ function DashboardContent() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900">
-      <header className="border-b bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/60">
-        <div className="max-w-6xl mx-auto px-4 py-4">
-          <h1 className="text-2xl font-semibold tracking-tight">Freelance Dashboard</h1>
+    <div className="min-h-screen bg-neutral-950 text-neutral-100">
+      <header className="border-b border-neutral-800 bg-neutral-950/70 backdrop-blur supports-[backdrop-filter]:bg-neutral-950/60">
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <h1 className="text-3xl font-semibold tracking-tight">Freelance Dashboard</h1>
+          <p className="mt-1 text-sm text-neutral-400">Manage your clients, projects, and payments</p>
         </div>
       </header>
-      <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-        <DashboardStats projects={state.projects} clients={state.clients} payments={state.payments} />
+      <main className="max-w-6xl mx-auto px-4 py-8 space-y-8">
         <section>
-          <h2 className="text-lg font-semibold mb-3">Projects</h2>
+          <h2 className="text-lg font-semibold mb-4 text-neutral-200">Overview</h2>
+          <DashboardStats projects={state.projects} clients={state.clients} payments={state.payments} />
+        </section>
+        <section>
+          <h2 className="text-lg font-semibold mb-4 text-neutral-200">Projects</h2>
           <ProjectList
             projects={state.projects}
             clients={state.clients}
