@@ -21,3 +21,11 @@ export interface Payment {
   amount: number;
   date: string;
 }
+
+export interface Task {
+  id: string;
+  projectId: string;
+  title: string;
+  status: "todo" | "in-progress" | "done";
+  priority: "low" | "medium" | "high";
+}

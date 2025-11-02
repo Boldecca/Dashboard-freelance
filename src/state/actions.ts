@@ -1,11 +1,12 @@
 // src/state/actions.ts
-import type { Client, Project, Payment } from "../models";
+import type { Client, Project, Payment, Task } from "../models";
 
 // --- State shape ---
 export type State = {
   clients: Client[];
   projects: Project[];
   payments: Payment[];
+  tasks: Task[];
 };
 
 // --- Initial state ---
@@ -13,6 +14,7 @@ export const initialState: State = {
   clients: [],
   projects: [],
   payments: [],
+  tasks: [],
 };
 
 // --- Actions ---
@@ -21,7 +23,9 @@ export type Action =
   | { type: "ADD_PROJECT"; payload: Project }
   | { type: "ADD_PAYMENT"; payload: Payment }
   | { type: "UPDATE_PROJECT_STATUS"; payload: { projectId: string; status: Project["status"] } }
-  | { type: "MARK_PROJECT_PAID"; payload: { projectId: string } };
+  | { type: "MARK_PROJECT_PAID"; payload: { projectId: string } }
+  | { type: "ADD_TASK"; payload: Task }
+  | { type: "UPDATE_TASK_STATUS"; payload: { taskId: string; status: Task["status"] } };
 
 // ✅ Export reducer here too
 export function reducer(state: State, action: Action): State {
@@ -48,6 +52,17 @@ export function reducer(state: State, action: Action): State {
         ...state,
         projects: state.projects.map((p) =>
           p.id === action.payload.projectId ? { ...p, paymentStatus: "paid" } : p
+        ),
+      };
+
+    case "ADD_TASK":
+      return { ...state, tasks: [...state.tasks, action.payload] };
+
+    case "UPDATE_TASK_STATUS":
+      return {
+        ...state,
+        tasks: state.tasks.map((t) =>
+          t.id === action.payload.taskId ? { ...t, status: action.payload.status } : t
         ),
       };
 
