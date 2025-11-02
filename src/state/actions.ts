@@ -11,9 +11,17 @@ export type State = {
 
 // --- Initial state ---
 export const initialState: State = {
-  clients: [],
-  projects: [],
-  payments: [],
+  clients: [
+    { id: "c-1", name: "Tech Startup Inc", country: "USA", email: "contact@techstartup.com" },
+    { id: "c-2", name: "Design Studio Co", country: "Canada", email: "hello@designstudio.ca" },
+  ],
+  projects: [
+    { id: "p-1", clientId: "c-1", title: "E-commerce Platform", budget: 15000, status: "in-progress", paymentStatus: "unpaid" },
+    { id: "p-2", clientId: "c-2", title: "Brand Identity Design", budget: 5000, status: "completed", paymentStatus: "paid" },
+  ],
+  payments: [
+    { id: "pay-1", projectId: "p-2", amount: 5000, date: new Date().toISOString() },
+  ],
   tasks: [],
 };
 

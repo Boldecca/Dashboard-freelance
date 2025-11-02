@@ -45,12 +45,10 @@ function DashboardContent() {
   };
 
   const handleAddProject = () => {
-    // Ensure at least one client exists
-    let clientId = state.clients[0]?.id;
+    // Require an existing client; do not auto-create
+    const clientId = state.clients[0]?.id;
     if (!clientId) {
-      clientId = `client-${Date.now()}`;
-      const newClient: Client = { id: clientId, name: "New Client", email: "contact@example.com", country: "USA" };
-      dispatch({ type: "ADD_CLIENT", payload: newClient });
+      return;
     }
     const projectId = `proj-${Date.now()}`;
     const newProject = {
@@ -78,40 +76,19 @@ function DashboardContent() {
           <DashboardStats projects={state.projects} clients={state.clients} payments={state.payments} />
         </section>
 
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          <div>
-            <h2 className="text-lg font-semibold mb-3 text-neutral-200">Clients</h2>
-            <input
-              className="w-full mb-4 px-4 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white/10"
-              placeholder="Search clients..."
-              value={clientsQuery}
-              onChange={(e) => setClientsQuery(e.target.value)}
-            />
-            <div className="space-y-4">
-              {filteredClients.map((c) => (
-                <div key={c.id} className="p-5 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-sm transition hover:shadow-md hover:shadow-black/30">
-                  <h3 className="font-medium text-neutral-100">{c.name}</h3>
-                  <div className="mt-3 text-sm text-neutral-400">
-                    <div className="mb-2">
-                      <div className="text-neutral-500">Country:</div>
-                      <div className="text-neutral-200">{c.country ?? "—"}</div>
-                    </div>
-                    <div>
-                      <div className="text-neutral-500">Email:</div>
-                      <div className="text-neutral-200">{c.email ?? "—"}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
+        <section>
           <div>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-semibold text-neutral-200">Projects</h2>
               <button
                 onClick={handleAddProject}
-                className="inline-flex items-center gap-2 px-3 py-2 rounded-md bg-white text-neutral-900 text-sm font-medium border border-white/10 hover:bg-neutral-200 active:scale-[0.99] transition"
+                disabled={state.clients.length === 0}
+                title={state.clients.length === 0 ? "Add a client from the Tasks panel first" : "Create a new project"}
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium border transition active:scale-[0.99] ${
+                  state.clients.length === 0
+                    ? "bg-neutral-700 text-neutral-400 border-neutral-700 cursor-not-allowed"
+                    : "bg-white text-neutral-900 border-white/10 hover:bg-neutral-200"
+                }`}
               >
                 <span className="text-lg leading-none">+</span>
                 New Project
