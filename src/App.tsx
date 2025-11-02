@@ -6,13 +6,19 @@ import { ProjectList } from "./components/ProjectList";
 import { validateAndCreatePayment } from "./utils";
 import { searchByName } from "./utils";
 import { type Client } from "./models";
-import { TasksPanel } from "./components/TasksPanel";
+// TasksPanel removed per request
 import { PaymentsList } from "./components/PaymentsList";
 
 function DashboardContent() {
   const { state, dispatch } = useAppState();
   const [clientsQuery, setClientsQuery] = useState("");
   const [projectsQuery, setProjectsQuery] = useState("");
+  const [showProjectForm, setShowProjectForm] = useState(false);
+  const [projectTitle, setProjectTitle] = useState("");
+  const [projectClientName, setProjectClientName] = useState<string>("");
+  const [projectClientEmail, setProjectClientEmail] = useState<string>("");
+  const [projectClientCountry, setProjectClientCountry] = useState<string>("");
+  const [projectBudget, setProjectBudget] = useState<number>(5000);
 
   const onChangeStatus = (projectId: string, status: import("./models").Project["status"]) => {
     dispatch({ type: "UPDATE_PROJECT_STATUS", payload: { projectId, status } });
@@ -29,13 +35,7 @@ function DashboardContent() {
   const filteredClients = searchByName<Client>(state.clients, clientsQuery);
   const filteredProjects = searchByName(state.projects, projectsQuery);
 
-  const onUpdateTaskStatus = (taskId: string, status: import("./models").Task["status"]) => {
-    dispatch({ type: "UPDATE_TASK_STATUS", payload: { taskId, status } });
-  };
-
-  const onAddTask = (task: import("./models").Task) => {
-    dispatch({ type: "ADD_TASK", payload: task });
-  };
+  // Removed tasks handlers
 
   const onAddClient = (client: import("./models").Client) => {
     dispatch({ type: "ADD_CLIENT", payload: client });
@@ -46,21 +46,51 @@ function DashboardContent() {
   };
 
   const handleAddProject = () => {
-    // Require an existing client; do not auto-create
-    const clientId = state.clients[0]?.id;
+    // Open inline form; user will type client name
+    setProjectTitle("");
+    setProjectClientName("");
+    setProjectClientEmail("");
+    setProjectClientCountry("");
+    setProjectBudget(5000);
+    setShowProjectForm(true);
+  };
+
+  const saveNewProject = () => {
+    const title = projectTitle.trim();
+    const clientName = projectClientName.trim();
+    if (!title || !clientName) return;
+
+    // Find existing client by case-insensitive name; create if missing
+    const existing = state.clients.find(
+      (c) => c.name.toLowerCase() === clientName.toLowerCase()
+    );
+    let clientId = existing?.id;
     if (!clientId) {
-      return;
+      clientId = `client-${Date.now()}`;
+      const newClient: Client = {
+        id: clientId,
+        name: clientName,
+        email: projectClientEmail || undefined,
+        country: projectClientCountry || undefined,
+      };
+      dispatch({ type: "ADD_CLIENT", payload: newClient });
     }
+
     const projectId = `proj-${Date.now()}`;
     const newProject = {
       id: projectId,
       clientId,
-      title: "New Project",
-      budget: 5000,
+      title,
+      budget: Number.isFinite(projectBudget) ? projectBudget : 0,
       status: "pending" as const,
       paymentStatus: "unpaid" as const,
     };
     dispatch({ type: "ADD_PROJECT", payload: newProject });
+    setShowProjectForm(false);
+    setProjectTitle("");
+    setProjectClientName("");
+    setProjectClientEmail("");
+    setProjectClientCountry("");
   };
 
   return (
@@ -110,18 +140,69 @@ function DashboardContent() {
               <h2 className="text-lg font-semibold text-neutral-200">Projects</h2>
               <button
                 onClick={handleAddProject}
-                disabled={state.clients.length === 0}
-                title={state.clients.length === 0 ? "Add a client from the Tasks panel first" : "Create a new project"}
-                className={`inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium border transition active:scale-[0.99] ${
-                  state.clients.length === 0
-                    ? "bg-neutral-700 text-neutral-400 border-neutral-700 cursor-not-allowed"
-                    : "bg-white text-neutral-900 border-white/10 hover:bg-neutral-200"
-                }`}
+                className={`inline-flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium border transition active:scale-[0.99] bg-white text-neutral-900 border-white/10 hover:bg-neutral-200`}
               >
                 <span className="text-lg leading-none">+</span>
                 New Project
               </button>
             </div>
+            {showProjectForm && (
+              <div className="mb-4 p-4 bg-neutral-900 border border-neutral-800 rounded-xl shadow-sm animate-in fade-in">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                  <input
+                    className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white/10"
+                    placeholder="Project title"
+                    value={projectTitle}
+                    onChange={(e) => setProjectTitle(e.target.value)}
+                  />
+                  <input
+                    className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white/10"
+                    placeholder="Client name"
+                    value={projectClientName}
+                    onChange={(e) => setProjectClientName(e.target.value)}
+                  />
+                  <input
+                    className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white/10"
+                    placeholder="Client email (optional)"
+                    value={projectClientEmail}
+                    onChange={(e) => setProjectClientEmail(e.target.value)}
+                  />
+                  <input
+                    className="px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white/10"
+                    placeholder="Client country (optional)"
+                    value={projectClientCountry}
+                    onChange={(e) => setProjectClientCountry(e.target.value)}
+                  />
+                  <input
+                    type="number"
+                    min="0"
+                    className="md:col-span-2 px-3 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white/10"
+                    placeholder="Budget"
+                    value={projectBudget}
+                    onChange={(e) => setProjectBudget(Number(e.target.value))}
+                  />
+                </div>
+                <div className="mt-3 flex items-center gap-2">
+                  <button
+                    onClick={saveNewProject}
+                    disabled={!projectTitle.trim() || !projectClientName.trim()}
+                    className={`px-3 py-2 rounded-md text-sm font-medium transition ${
+                      projectTitle.trim() && projectClientName.trim()
+                        ? "bg-white text-neutral-900 hover:bg-neutral-200"
+                        : "bg-neutral-700 text-neutral-400 cursor-not-allowed"
+                    }`}
+                  >
+                    Save Project
+                  </button>
+                  <button
+                    onClick={() => setShowProjectForm(false)}
+                    className="px-3 py-2 rounded-md text-sm font-medium border border-neutral-700 text-neutral-300 hover:bg-neutral-800 transition"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
             <input
               className="w-full mb-4 px-4 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white/10"
               placeholder="Search projects..."
@@ -156,15 +237,7 @@ function DashboardContent() {
           </div>
         </section>
 
-        <TasksPanel
-          tasks={state.tasks}
-          onUpdateTaskStatus={onUpdateTaskStatus}
-          onAddTask={onAddTask}
-          clients={state.clients}
-          projects={state.projects}
-          onAddClient={onAddClient}
-          onAddProject={onAddProject}
-        />
+        {/* Tasks panel removed */}
       </main>
     </div>
   );
