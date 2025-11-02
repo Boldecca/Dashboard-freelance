@@ -32,6 +32,10 @@ function DashboardContent() {
     dispatch({ type: "UPDATE_TASK_STATUS", payload: { taskId, status } });
   };
 
+  const onAddTask = (task: import("./models").Task) => {
+    dispatch({ type: "ADD_TASK", payload: task });
+  };
+
   const handleAddProject = () => {
     // Ensure at least one client exists
     let clientId = state.clients[0]?.id;
@@ -134,7 +138,13 @@ function DashboardContent() {
           </div>
         </section>
 
-        <TasksPanel tasks={state.tasks} onUpdateTaskStatus={onUpdateTaskStatus} />
+        <TasksPanel
+          tasks={state.tasks}
+          onUpdateTaskStatus={onUpdateTaskStatus}
+          onAddTask={onAddTask}
+          clients={state.clients}
+          projects={state.projects}
+        />
       </main>
     </div>
   );
