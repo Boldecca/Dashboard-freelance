@@ -15,21 +15,21 @@ export const DashboardStats: React.FC<Props> = ({ projects, clients: _clients, p
   const fmt = new Intl.NumberFormat(undefined, { style: "currency", currency: "USD", maximumFractionDigits: 0 });
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div className="p-6 bg-white border border-neutral-200 rounded-2xl shadow-sm">
-        <h5 className="text-sm font-medium text-neutral-500">Total Projects</h5>
-        <p className="mt-1 text-2xl font-semibold text-black">{projects.length}</p>
+      <div className="p-6 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-sm">
+        <h5 className="text-sm font-medium text-neutral-400">Total Projects</h5>
+        <p className="mt-1 text-2xl font-semibold text-white/90">{projects.length}</p>
       </div>
-      <div className="p-6 bg-white border border-neutral-200 rounded-2xl shadow-sm">
-        <h5 className="text-sm font-medium text-neutral-500">Paid</h5>
-        <p className="mt-1 text-2xl font-semibold text-black">{paid}</p>
+      <div className="p-6 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-sm">
+        <h5 className="text-sm font-medium text-neutral-400">Paid</h5>
+        <p className="mt-1 text-2xl font-semibold text-white/90">{paid}</p>
       </div>
-      <div className="p-6 bg-white border border-neutral-200 rounded-2xl shadow-sm">
-        <h5 className="text-sm font-medium text-neutral-500">Unpaid</h5>
-        <p className="mt-1 text-2xl font-semibold text-black">{unpaid}</p>
+      <div className="p-6 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-sm">
+        <h5 className="text-sm font-medium text-neutral-400">Unpaid</h5>
+        <p className="mt-1 text-2xl font-semibold text-white/90">{unpaid}</p>
       </div>
-      <div className="p-6 bg-white border border-neutral-200 rounded-2xl shadow-sm">
-        <h5 className="text-sm font-medium text-neutral-500">Total Budget</h5>
-        <p className="mt-1 text-2xl font-semibold text-black">{fmt.format(totalBudget)}</p>
+      <div className="p-6 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-sm">
+        <h5 className="text-sm font-medium text-neutral-400">Total Budget</h5>
+        <p className="mt-1 text-2xl font-semibold text-white/90">{fmt.format(totalBudget)}</p>
       </div>
     </div>
   );
