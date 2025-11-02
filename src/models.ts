@@ -1,25 +1,20 @@
-// models.ts
+// src/models/index.ts
 export interface Client {
   id: string;
   name: string;
-  country: string;
   email?: string;
 }
-
-export type ProjectStatus = "pending" | "in-progress" | "completed";
-export type PaymentState = "paid" | "unpaid";
 
 export interface Project {
   id: string;
   clientId: string;
-  title: string;
-  budget: number;
-  status: ProjectStatus;
-  paymentStatus: PaymentState;
+  name: string;
+  status?: string;
 }
 
 export interface Payment {
+  id: string;
   projectId: string;
   amount: number;
-  date: string; // ISO
+  date: string;
 }

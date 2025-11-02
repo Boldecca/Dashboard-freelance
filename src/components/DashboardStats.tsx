@@ -28,3 +28,4 @@ export const DashboardStats: React.FC<Props> = ({ projects, clients, payments })
     </div>
   );
 };
+
