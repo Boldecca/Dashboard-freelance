@@ -7,6 +7,7 @@ import { validateAndCreatePayment } from "./utils";
 import { searchByName } from "./utils";
 import { type Client } from "./models";
 import { TasksPanel } from "./components/TasksPanel";
+import { PaymentsList } from "./components/PaymentsList";
 
 function DashboardContent() {
   const { state, dispatch } = useAppState();
@@ -76,7 +77,34 @@ function DashboardContent() {
           <DashboardStats projects={state.projects} clients={state.clients} payments={state.payments} />
         </section>
 
-        <section>
+        <section className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+          <div>
+            <h2 className="text-lg font-semibold mb-3 text-neutral-200">Clients</h2>
+            <input
+              className="w-full mb-4 px-4 py-2 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200 placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-white/10"
+              placeholder="Search clients..."
+              value={clientsQuery}
+              onChange={(e) => setClientsQuery(e.target.value)}
+            />
+            <div className="space-y-4">
+              {filteredClients.map((c) => (
+                <div key={c.id} className="p-5 bg-neutral-900 border border-neutral-800 rounded-2xl shadow-sm transition hover:shadow-md hover:shadow-black/30">
+                  <h3 className="font-medium text-neutral-100">{c.name}</h3>
+                  <div className="mt-3 text-sm text-neutral-400">
+                    <div className="mb-2">
+                      <div className="text-neutral-500">Country:</div>
+                      <div className="text-neutral-200">{c.country ?? "—"}</div>
+                    </div>
+                    <div>
+                      <div className="text-neutral-500">Email:</div>
+                      <div className="text-neutral-200">{c.email ?? "—"}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div>
             <div className="flex items-center justify-between mb-3">
               <h2 className="text-lg font-semibold text-neutral-200">Projects</h2>
@@ -120,6 +148,11 @@ function DashboardContent() {
                 onChangeStatus={onChangeStatus}
               />
             )}
+
+            <div className="mt-6">
+              <h3 className="text-md font-semibold mb-3 text-neutral-200">Payments</h3>
+              <PaymentsList payments={state.payments} projects={state.projects} clients={state.clients} />
+            </div>
           </div>
         </section>
 
