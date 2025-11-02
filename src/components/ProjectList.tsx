@@ -43,15 +43,28 @@ export const ProjectList: React.FC<Props> = ({ projects, clients, onMarkPaid, on
                   Mark as Paid
                 </button>
               )}
-              <select
-                className="px-3 py-2 rounded-md border border-neutral-300 bg-white text-sm"
-                value={p.status}
-                onChange={(e) => onChangeStatus(p.id, e.target.value as Project["status"])}
-              >
-                <option value="pending">pending</option>
-                <option value="in-progress">in-progress</option>
-                <option value="completed">completed</option>
-              </select>
+              <div className="flex items-center gap-2">
+                <select
+                  className="px-3 py-2 rounded-md border border-neutral-300 bg-white text-sm"
+                  value={p.status}
+                  onChange={(e) => onChangeStatus(p.id, e.target.value as Project["status"])}
+                >
+                  <option value="pending">pending</option>
+                  <option value="in-progress">in-progress</option>
+                  <option value="completed">completed</option>
+                </select>
+                <span
+                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border transition-colors ${
+                    p.status === "completed"
+                      ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                      : p.status === "in-progress"
+                      ? "bg-blue-50 text-blue-700 border-blue-200"
+                      : "bg-neutral-50 text-neutral-700 border-neutral-200"
+                  }`}
+                >
+                  {p.status}
+                </span>
+              </div>
             </div>
           </div>
         );

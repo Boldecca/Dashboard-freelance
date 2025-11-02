@@ -102,20 +102,33 @@ export const TasksPanel: React.FC<Props> = ({ tasks, onUpdateTaskStatus }) => {
           {filtered.length === 0 ? "No tasks match your filters" : (
             <ul className="w-full space-y-2">
               {filtered.map((t) => (
-                <li key={t.id} className="flex items-center justify-between bg-neutral-800/50 border border-neutral-700 rounded-lg px-3 py-2">
-                  <div>
+                <li key={t.id} className="flex items-center justify-between bg-neutral-800/50 border border-neutral-700 rounded-lg px-3 py-2 transition hover:border-neutral-600">
+                  <div className="min-w-0">
                     <div className="font-medium text-neutral-200">{t.title}</div>
                     <div className="text-xs text-neutral-400">{t.priority}</div>
                   </div>
-                  <select
-                    className="px-2 py-1 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200 text-sm"
-                    value={t.status}
-                    onChange={(e) => onUpdateTaskStatus(t.id, e.target.value as Task["status"])}
-                  >
-                    <option value="todo">todo</option>
-                    <option value="in-progress">in-progress</option>
-                    <option value="done">done</option>
-                  </select>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span
+                      className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium border transition-colors ${
+                        t.status === "done"
+                          ? "bg-emerald-900/40 text-emerald-300 border-emerald-800"
+                          : t.status === "in-progress"
+                          ? "bg-amber-900/40 text-amber-300 border-amber-800"
+                          : "bg-neutral-900 text-neutral-300 border-neutral-700"
+                      }`}
+                    >
+                      {t.status}
+                    </span>
+                    <select
+                      className="px-2 py-1 rounded-md border border-neutral-700 bg-neutral-800 text-neutral-200 text-sm"
+                      value={t.status}
+                      onChange={(e) => onUpdateTaskStatus(t.id, e.target.value as Task["status"])}
+                    >
+                      <option value="todo">todo</option>
+                      <option value="in-progress">in-progress</option>
+                      <option value="done">done</option>
+                    </select>
+                  </div>
                 </li>
               ))}
             </ul>
