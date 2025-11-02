@@ -1,5 +1,5 @@
 // src/state/reducer.tsx
-import { State, Action } from "./actions";
+import type { State, Action } from "./actions";
 
 export function reducer(state: State, action: Action): State {
   switch (action.type) {
