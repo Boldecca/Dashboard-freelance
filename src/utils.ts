@@ -23,7 +23,12 @@ export function findClientById(clients: Client[], id?: string | null): Client | 
 export function validateAndCreatePayment(projectId: string, amount: number): Payment {
   if (!projectId || typeof projectId !== "string") throw new Error("Invalid projectId");
   if (typeof amount !== "number" || amount <= 0) throw new Error("Amount must be > 0");
-  const payment: Payment = { projectId, amount, date: new Date().toISOString() };
+  const payment: Payment = {
+    id: `${projectId}-${Date.now()}`,
+    projectId,
+    amount,
+    date: new Date().toISOString(),
+  };
   return payment;
 }
 

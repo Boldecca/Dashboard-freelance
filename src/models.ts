@@ -3,13 +3,16 @@ export interface Client {
   id: string;
   name: string;
   email?: string;
+  country?: string;
 }
 
 export interface Project {
   id: string;
   clientId: string;
-  name: string;
-  status?: string;
+  title: string;
+  budget: number;
+  status: "pending" | "in-progress" | "completed";
+  paymentStatus: "paid" | "unpaid";
 }
 
 export interface Payment {

@@ -19,7 +19,9 @@ export const initialState: State = {
 export type Action =
   | { type: "ADD_CLIENT"; payload: Client }
   | { type: "ADD_PROJECT"; payload: Project }
-  | { type: "ADD_PAYMENT"; payload: Payment };
+  | { type: "ADD_PAYMENT"; payload: Payment }
+  | { type: "UPDATE_PROJECT_STATUS"; payload: { projectId: string; status: Project["status"] } }
+  | { type: "MARK_PROJECT_PAID"; payload: { projectId: string } };
 
 // ✅ Export reducer here too
 export function reducer(state: State, action: Action): State {
@@ -32,6 +34,22 @@ export function reducer(state: State, action: Action): State {
 
     case "ADD_PAYMENT":
       return { ...state, payments: [...state.payments, action.payload] };
+
+    case "UPDATE_PROJECT_STATUS":
+      return {
+        ...state,
+        projects: state.projects.map((p) =>
+          p.id === action.payload.projectId ? { ...p, status: action.payload.status } : p
+        ),
+      };
+
+    case "MARK_PROJECT_PAID":
+      return {
+        ...state,
+        projects: state.projects.map((p) =>
+          p.id === action.payload.projectId ? { ...p, paymentStatus: "paid" } : p
+        ),
+      };
 
     default:
       return state;
